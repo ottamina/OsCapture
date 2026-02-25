@@ -1,0 +1,9 @@
+# Everything
+*
+
+# Except these
+!.gitignore
+!README.md
+!LICENSE
+!releases/
+!releases/**
