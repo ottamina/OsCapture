@@ -1,9 +1,69 @@
-# Everything
-*
+# Android Studio / IntelliJ IDEA
+.idea/
+*.iml
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/inspectionProfiles/
+.idea/dictionaries/
+.idea/shelf/
+.idea/assetWizardSettings.xml
+.idea/navEditor.xml
+.idea/render.xml
+.idea/kotlin-js-meta.xml
+.idea/uiDesigner.xml
+.idea/misc.xml
 
-# Except these
-!.gitignore
-!README.md
-!LICENSE
-!releases/
-!releases/**
+# Gradle
+.gradle/
+build/
+app/build/
+captured-video.mp4
+
+# Local Configuration
+local.properties
+.DS_Store
+
+# Signing / Keystores
+*.keystore
+*.jks
+*.pepk
+*.jks_original
+
+# Google Services
+google-services.json
+
+# Navigation editor
+.navigation/
+
+# Log files
+*.log
+
+# Caching
+.gradle/
+.nb-gradle/
+
+# Android Studio - Navigation
+.navigation/
+
+# Generated files
+cap-deploy.js
+
+# Testing
+captures/
+test-results/
+coverage/
+
+# Misc
+.externalNativeBuild/
+.cxx/
+cmake-build-debug/
+.vscode/
+.history/
+*.apk
+!releases/*.apk
