@@ -1,93 +1,91 @@
 <h1 align="center">
-  OsCapture
+  📸 OsCapture
 </h1>
 
 <p align="center">
-  <b>Hareket algılayarak otomatik fotoğraf çeken Android kamera uygulaması</b>
+  <b>Hareket algılayarak otomatik fotoğraf çeken akıllı Android kamera uygulaması</b>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white" alt="Platform">
-  <img src="https://img.shields.io/badge/Min%20SDK-24-brightgreen" alt="Min SDK">
-  <img src="https://img.shields.io/github/license/ottamina/OsCapture" alt="License">
+  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Platform">
+  <img src="https://img.shields.io/badge/Kotlin-0095D5?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin">
+  <img src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/license/ottamina/OsCapture?style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/stars/ottamina/OsCapture?style=flat-square" alt="Stars">
+  <img src="https://img.shields.io/github/forks/ottamina/OsCapture?style=flat-square" alt="Forks">
 </p>
 
 ---
 
-## Nedir?
+## 🚀 Proje Hakkında
 
-OsCapture, kamera görüntüsünü gerçek zamanlı analiz ederek sahnedeki nesneler belirli bir süre hareketsiz kaldığında **otomatik olarak tek bir fotoğraf** çeken bir Android uygulamasıdır. Fotoğraf çekildikten sonra sistem kilitlenir; yeni bir hareket algılanmadan ikinci bir fotoğraf çekilmez.
+**OsCapture**, kamera görüntüsünü gerçek zamanlı analiz ederek sahnedeki nesneler belirli bir süre hareketsiz kaldığında **otomatik olarak** fotoğraf çeken bir Android uygulamasıdır. Özellikle vahşi yaşam gözlemi, timelapse başlangıçları veya sabit kadraj gerektiren otomatik çekim senaryoları için tasarlanmıştır.
 
-## Özellikler
+Fotoğraf çekildikten sonra sistem kendini kilitler; bu sayede aynı sahnenin gereksiz yere onlarca fotoğrafının çekilmesi engellenir. Yeni bir hareket algılandığında sistem tekrar aktif hale gelir.
 
-| Özellik | Açıklama |
-|---|---|
-| **Piksel Bazlı Hareket Algılama** | Ardışık frame'lerin Y-plane piksellerini karşılaştırarak hassas hareket tespiti |
-| **Ayarlanabilir Bekleme Süresi** | Slider ile 0.5s — 10s arası hareketsizlik süresi ayarlama |
-| **Kilitleme Mekanizması** | Fotoğraf sonrası otomatik kilit — yeni hareket olmadan tekrar çekim yok |
-| **Otomatik & Tekli Çekim** | Koşullar sağlandığında yalnızca 1 fotoğraf |
-| **Başlat / Durdur Butonu** | Tek tuşla otomatik çekimi aktifleştir/deaktifleştir |
-| **Durum Göstergesi** | Ekranda anlık state machine durumu |
-| **Fotoğraf Sayacı** | Oturum boyunca kaç fotoğraf çekildiğini gösterir |
+## ✨ Temel Özellikler
 
-## Durum Makinesi (State Machine)
+- **Piksel Bazlı Hareket Analizi:** Ardışık karelerin Y-plane piksellerini (parlaklık) örnekleyerek düşük güç tüketimiyle hassas hareket tespiti.
+- **Dinamik Bekleme Süresi:** 0.5 saniyeden 10 saniyeye kadar ayarlanabilir hareketsizlik eşiği.
+- **Akıllı Kilit Mekanizması:** Fotoğraf çekimi sonrası otomatik kilit — yeni bir hareket algılanmadan tekrar çekim yapmaz.
+- **Gerçek Zamanlı Durum Takibi:** State Machine tabanlı arayüz ile uygulamanın o an ne yaptığını (bekliyor, hareket var, zamanlıyor, kilitli) anlık görme.
+- **Modern UI:** Material 3 ve Jetpack Compose ile temiz, hızlı ve kullanıcı dostu arayüz.
 
-```
-                  Baslat
-   ┌──────┐ ──────────────► ┌───────────────────┐
-   │ IDLE │                 │ WAITING_FOR_MOTION │
-   └──────┘ ◄────────────── └─────────┬─────────┘
-              Durdur                  │ Hareket algılandı
-                                      ▼
-                              ┌───────────────┐
-                     ┌───────►│ MOTION_ACTIVE │◄────────┐
-                     │        └───────┬───────┘         │
-                     │                │ Sahne durağan    │
-                     │                ▼                  │
-                     │      ┌─────────────────┐         │
-                     │      │ STILLNESS_TIMER │─────────┘
-                     │      └────────┬────────┘ Tekrar hareket
-                     │               │ Timer doldu
-                     │               ▼
-                     │        ┌──────────┐
-                     └────────│  LOCKED  │  Fotoğraf çekildi
-                 Yeni hareket └──────────┘
+## 🛠 Teknik Mimari (State Machine)
+
+Uygulama, güvenilir bir çekim süreci için aşağıdaki durum makinesini kullanır:
+
+```mermaid
+graph TD
+    IDLE((IDLE)) -- "Başlat Butonu" --> WAITING[WAITING_FOR_MOTION]
+    WAITING -- "Hareket Algılandı" --> MOTION[MOTION_ACTIVE]
+    MOTION -- "Sahne Durağanlaştı" --> TIMER[STILLNESS_TIMER]
+    TIMER -- "Tekrar Hareket" --> MOTION
+    TIMER -- "Süre Doldu" --> LOCKED[LOCKED / ÇEKİM]
+    LOCKED -- "Yeni Hareket" --> MOTION
+    any[Herhangi Bir Durum] -- "Durdur Butonu" --> IDLE
 ```
 
-## Teknolojiler
+## 🏗 Geliştiriciler İçin
 
-- **Kotlin** — Ana programlama dili
-- **Jetpack Compose** — Modern deklaratif UI
-- **CameraX** — Kamera preview, analiz ve fotoğraf çekimi
-- **Material 3** — UI bileşenleri
+Bu proje artık **açık kaynak** bir projedir. Katkıda bulunabilir, fork edebilir veya kendi projelerinizde referans alabilirsiniz.
 
-## İndirme
+### Gereksinimler
+- Android Studio Ladybug veya üzeri
+- JDK 17+
+- Android Device (API 24+)
 
-APK dosyasını [`releases`](releases/) klasöründen indirebilirsiniz:
+### Nasıl Derlenir?
+1. Repoyu klonlayın:
+   ```bash
+   git clone https://github.com/ottamina/OsCapture.git
+   ```
+2. Android Studio ile projeyi açın.
+3. `local.properties` dosyasının SDK yolunuzu içerdiğinden emin olun.
+4. Gradle senkronizasyonunu bekleyin ve cihazınıza yükleyin.
 
-**[OsCapture-v1.0.apk](releases/OsCapture-v1.0.apk)**
+## 📱 İndirme
 
-### Kurulum
+Derlenmiş en güncel sürümü (APK) [`releases`](releases/) klasöründe bulabilirsiniz:
 
-1. APK dosyasını Android cihazınıza indirin
-2. "Bilinmeyen kaynaklardan yükleme" iznini verin
-3. APK'yı açıp kurun
+👉 **[OsCapture-v1.0.apk](releases/OsCapture-v1.0.apk)**
 
-## Kullanım
+## 📚 Teknolojiler
 
-1. Uygulamayı aç, kamera izni ver
-2. Alt paneldeki **slider** ile bekleme süresini ayarla (varsayılan 0.5s)
-3. **Başlat** butonuna bas
-4. Kamerayı sahneye tut — hareket algılanınca durum göstergesi değişir
-5. Sahne durağanlaştığında belirlenen süre sonunda otomatik fotoğraf çekilir
-6. Yeni fotoğraf için sahnede tekrar hareket olması gerekir
+- **Kotlin:** Modern Android geliştirme dili.
+- **Jetpack Compose:** Deklaratif UI kütüphanesi.
+- **CameraX:** Kamera önizleme, analiz ve fotoğraf çekimi için Google kütüphanesi.
+- **Coroutines & Handler:** Asenkron işlemler ve zamanlayıcılar için.
 
-## Lisans
+## 📄 Lisans
 
-Bu proje [MIT License](LICENSE) altında lisanslanmıştır.
+Bu proje **MIT Lisansı** altında korunmaktadır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasına göz atabilirsiniz.
 
 ---
 
 <p align="center">
-  Made with care by <a href="https://github.com/ottamina">Osman Teksoy</a>
+  Geliştiren: <b><a href="https://github.com/ottamina">Osman Teksoy</a></b>
 </p>
